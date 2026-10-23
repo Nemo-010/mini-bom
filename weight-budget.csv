@@ -12,23 +12,33 @@ COMPONENT,"R1,R4,R6,R8 10k 0603",4,0.002,0.008,Vishay CRCW0603 mass = 2 mg
 COMPONENT,"R2,R3,R5,R7 10R 0603",4,0.002,0.008,Vishay CRCW0603 mass = 2 mg
 COMPONENT,R10 330R 0603,1,0.002,0.002,Vishay CRCW0603 mass = 2 mg
 COMPONENT,U2 BMI270 LGA-14 (DNP),1,0.012,0.012,"DNP, excluded from AUW"
+MODULE,U1 Seeed XIAO ESP32S3 Sense + camera board,1,4.6,4.6,ESTIMATE: 21x17.8 main + 21x17.8x15 mm camera stack (Seeed wiki dimensions); Seeed publishes no mass. Computed from PCB volume + OV2640 + B2B connectors.
 OPTIONAL,BZ1 TDK PS1240P02CT3 piezo,1,0.35,0.35,"TDK 12.2 mm x 3.5 mm brass-disc piezo, ~0.35 g estimate; not on the datasheet"
-MOTOR,"1020 coreless, low case (4.3 g)",4,4.3,17.2,"cannot be lighter than an 8520 (8.5 x 20 mm, ~4.3 g) since a 1020 is a 10 x 20 mm can"
-PROP,Propeller 1020-class 2-blade,4,0.35,1.4,typical 55-65 mm micro prop
+MOTOR,Coreless 7x20 (Sharvi ST2001RO0137),4,3.4,13.6,Evelta 720 page: 3.4 g each. A 1020 is a 10 x 20 mm can and would be heavier.
+PROP,65 mm 2-blade (bundled with the motor),4,0.35,1.4,typical 65 mm micro prop
 
-,"Populated airframe, no battery",,,22.50,
+,"Populated airframe, no battery",,,23.50,
 ,DNP + optional parts if fitted,,,0.72,
 
 BATTERY,"10 g 1S pack = 1.54 Wh, 416 mAh nominal",1,10.0,10.0,"10 g at 154 Wh/kg, the WLY 250 mAh cell's measured density"
-RESULT,AUW with the 10 g pack,,,32.50,
-RESULT,Budget,,,30.00,given in the brief
-RESULT,Headroom against the 30 g budget,,,-2.50,negative = over budget
-RESULT,Verdict,,,OVER BUDGET,
+RESULT,AUW with the 10 g pack,,,33.50,
+RESULT,Budget,,,40.00,given in the brief
+RESULT,Headroom against the 40 g budget,,,+6.50,negative = over budget
+RESULT,Verdict,,,within budget,
 
-PROBLEM,15 min and a 10 g battery cannot both hold,,,,"a 10 g 1S pack is 1.54 Wh, which is ~7 min of hover at this AUW. Reaching 15 min needs a ~35 g pack and pushes AUW to ~57 g, i.e. almost double the 30 g target. Pick one: 30 g, or 15 min."
-TRADE,Motor mass per motor (g),4.3,5.0,6.0,band: 8520-equivalent up to (10/8.5)^2 scaled from 8520
-TRADE,"Airframe, no battery (g)",22.50,25.30,29.30,
-TRADE,AUW with 10 g pack (g),32.50,35.30,39.30,
-TRADE,Flight time on the 10 g pack (min),7.6,7.0,6.3,1.54 Wh x 0.8 / hover power; hover power = AUW x 0.30 W/g
-TRADE,Pack mass for 15 min (g),35.0,39.4,45.6,
-TRADE,AUW needed for 15 min (g),57.5,64.7,74.9,iterated to convergence; 15 min and a 10 g pack cannot both hold
+ENDURE,Energy available on the 10 g pack (Wh),,,,1.23 Wh = 1.54 Wh x 80% depth of discharge
+ENDURE,Prop diameter,31 mm,55 mm,65 mm,"31 mm fits the bare board; 55/65 mm need arms, which add mass"
+ENDURE,Ideal induced power (W),2.19,1.23,1.04,"P = (mg)^1.5 / sqrt(2 rho A), momentum theory lower bound"
+ENDURE,Figure of merit k,6.5,5.0,4.5,"k calibrated on the Eachine E010 class: 22 g, 31 mm props, ~3.5 min on 150 mAh gives k~6.5. k falls as props get bigger."
+ENDURE,Hover power (W),14.24,6.17,4.70,ideal x k
+ENDURE,Endurance (min),5.2,12.0,15.7,best case for each prop size on the 10 g pack
+ENDURE,Hover power per gram (W/g),0.425,0.184,0.140,this is the number to minimise
+
+OPTIMISE,How to get the most endurance out of 10 g,,,,"1. Biggest prop that fits - endurance scales ~1/diameter. This is the single biggest lever and it is an airframe decision, not an electronics one."
+OPTIMISE,2. Keep AUW down,,,,"every gram of AUW costs ~1.5% of endurance. At 33.5 g you have 6.5 g of headroom to 40 g; spend it on structure for bigger props, not on heavier electronics."
+OPTIMISE,3. Cell choice inside 10 g,,,,"154 Wh/kg is already near the practical ceiling for small 1S pouches (the 78 Wh/kg Pro-Range 360 mAh shows how bad cheap packs are). A higher-C or HV 4.35 V cell buys ~5%, not more."
+OPTIMISE,4. Drop the camera,,,,the XIAO Sense + camera board is ~4.6 g of the 33.5 g. The plain XIAO ESP32S3 is lighter and cheaper; only keep the camera if you need it.
+OPTIMISE,5. Do not fit the piezo unless needed,,,,BZ1 is ~0.35 g and costs 0.5% endurance. It is already Optional.
+
+BOUND,15 min on the 10 g pack at 65 mm props,,,,"reachable only up to 35 g AUW at k=4.5, 33 g at k=5.0, 31 g at k=5.5. This airframe is 33.5 g, so 15 min is inside reach at k=4.5 with 1.5 g to spare - but there is no margin, and any extra frame mass, wire or heavier motor breaks it."
+BOUND,15 min on 31 mm props,,,,not reachable. 31 mm props at k=6.5 give 5.2 min and would need 29 g of battery to reach 15 min. Props that clear a 32.5x30 mm board without arms are too small to be efficient.

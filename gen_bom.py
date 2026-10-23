@@ -159,6 +159,35 @@ ROWS = [
          ds="https://robu-prod-media.s3.ap-south-1.amazonaws.com/uploads/2024/06/C105881.pdf",
          notes="Likely the series resistor on the buzzer drive line."),
 
+    dict(ref="M1,M2,M3,M4", qty=4, value="Coreless 7x20 + 65 mm prop", dnp="", included="Yes",
+         fp="7 mm dia x 20 mm can, 1 mm shaft (motor not in the KiCad BOM)",
+         supplier="Sharvi", part="Sharvi Coreless Motor 7X20mm With Propeller (motor + 1 prop)",
+         sku="ST2001RO0137", mpn="720 coreless", unit=135.63, avail="In Stock",
+         lead="Not published", match="substitute-no-1020",
+         url="https://sharvielectronics.com/product/coreless-motor-7x20mm-with-propeller/",
+         ds="",
+         notes=("The brief assumes 1020 motors. None of Robu, Evelta, Robocraze or Sharvi stock "
+                "a 1020, so this is the in-stock substitute: Sharvi 7x20, Rs 135.63 each incl. "
+                "tax, one motor plus one 65 mm prop per unit, so qty 4 covers all four arms. "
+                "Rated 3.7 V, 60 mA, 48000 rpm, 7 mm dia x 20 mm, 1 mm shaft, 100 mm wires. "
+                "Cheaper than Robu's 720 pair (Rs 551) or Evelta's 4-pack (Rs 350) per motor. "
+                "Note the listed price is ex-tax in the page header and Rs 135.63 is the "
+                "selling price shown at qty 1.")),
+
+    dict(ref="U1", qty=1, value="XIAO ESP32S3 Sense + camera", dnp="", included="Yes",
+         fp="21 x 17.8 mm, 21 x 17.8 x 15 mm with camera expansion",
+         supplier="Robu", part="Seeed Studio XIAO ESP32S3 Sense (OV2640 + mic + SD)",
+         sku="1587654", mpn="XIAO ESP32S3 Sense", unit=2199.00, avail="Out of Stock",
+         lead="Not published", match="exact-oos",
+         url="https://robu.in/product/seeed-studio-xiao-esp32s3-sense-2-4ghz-wi-fi-ble-5-0-ov2640-camera-sensor-digital-microphone-battery-charge-supported-rich-interface-iot-embedded-ml/",
+         ds="",
+         notes=("Flight controller, not in the KiCad BOM. 21 x 17.8 mm, 21 x 17.8 x 15 mm with "
+                "the camera expansion board. ESP32-S3R8, 8 MB PSRAM, 8 MB flash, OV2640, PDM mic, "
+                "microSD, ~102 mA active with the expansion board. Out of stock at Robu at "
+                "Rs 2199. Seeed publishes no mass for either board - the 4.6 g in the weight "
+                "budget is an estimate. Note this is the Sense variant with the camera; the "
+                "plain XIAO ESP32S3 (Rs 1139, SKU 1569230) is a different part.")),
+
     dict(ref="U2", qty=1, value="BMI270", dnp="DNP", included="Optional",
          fp="XDCR_BMI270 (LGA-14)",
          supplier="Robu", part="Bosch BMI270 6-axis IMU",
@@ -174,19 +203,12 @@ ROWS = [
 
 # Non-BOM items the brief asked about: motors, battery, PCB.
 EXTRAS = [
-    dict(item="Motor (1020)", qty=4, supplier="", part="", sku="", unit=None, avail="n/a",
-         notes=("No 1020 coreless motor is stocked by Robu, Evelta or Robocraze. Robu's brushed "
-                "coreless category only has 615 / 720 / 8520; Evelta has 0615 / 720 / 8520; "
-                "Robocraze has 7x16 and 8x20 only. Buying 1020 means AliExpress or a direct "
-                "Chinese vendor, so there is no Indian price or lead time to quote. The 720 and "
-                "8520 at Robu are the drop-in substitutes if the frame can take a 7x20 or 8.5x20 "
-                "motor instead.")),
-    dict(item="Battery (1S, ~10 g target)", qty=1, supplier="Robu", part="WLY 1S LiPo range",
+    dict(item="Battery (1S, 10 g)", qty=1, supplier="Robu", part="WLY 1S LiPo range",
          sku="see notes", unit=None, avail="Mostly Out of Stock",
          notes=("Every small 1S pack checked at Robu was Out of Stock on 2026-10-23 (WLY551145 "
-                "230 mAh, WLY602025 250 mAh, WLY601145 300 mAh, WLY52535 450 mAh). Capacity for "
-                "15 min is computed in weight-budget.csv; it comes out far above what 10 g buys, "
-                "so 15 min and 10 g cannot both hold on this airframe.")),
+                "230 mAh, WLY602025 250 mAh, WLY601145 300 mAh, WLY52535 450 mAh). The 250 mAh "
+                "cell measures 6 g / 154 Wh/kg, which is what the 10 g = 1.54 Wh figure is based "
+                "on. Endurance is computed in weight-budget.csv.")),
     dict(item="PCB", qty=1, supplier="", part="32.5 mm x 30 mm, 2-layer", sku="", unit=None,
          avail="n/a",
          notes="Bare board, not a component. Weight is computed in weight-budget.csv."),
@@ -244,30 +266,43 @@ def write_not_found(path):
                 nearest = "TDK ICM-42688-P R184326 Rs 2364, or ST LSM6DSO, both LGA-14, in stock"
                 nurl = "https://robu.in/product/icm-42688-p-tdk-invensense/"
             w.writerow([r["ref"], r["qty"], r["value"], r["fp"], r["notes"], nearest, nurl, r["ds"]])
-        w.writerow(["1020 motor", 4, "1020 coreless", "10 x 20 mm",
-                    EXTRAS[0]["notes"], "", "", ""])
-        w.writerow(["BAT1", 1, "1S LiPo", "~10 g",
-                    EXTRAS[1]["notes"], "", "", ""])
+        for e in EXTRAS:
+            if e["item"] == "PCB":
+                continue
+            w.writerow([e["item"], e["qty"], e.get("part", ""), "", e["notes"], "", "", ""])
 
 
 def write_weight(path):
-    """Weight budget and the battery/flight-time trade that comes with it.
+    """Weight budget, 40 g ceiling, and endurance maximisation on a 10 g pack.
 
-    Anchors used, all from live pages or datasheets:
-      720 coreless (7 x 20 mm)  = 3.4 g each      Evelta product page
-      8520 coreless (8.5 x 20)  = ~4.3 g each     AliExpress listings
-      WLY 250 mAh 1S            = 6 g, 154 Wh/kg  Robu product page
-      Pro-Range 360 mAh 1S      = 17 g, 78 Wh/kg  Robu product page
+    Anchors, all from live pages or datasheets:
+      720 coreless (7 x 20 mm)   = 3.4 g each       Evelta product page
+      8520 coreless (8.5 x 20)   = ~4.3 g each      AliExpress listings
+      WLY 250 mAh 1S             = 6 g, 154 Wh/kg   Robu product page
+      Pro-Range 360 mAh 1S       = 17 g, 78 Wh/kg   Robu product page
+      XIAO ESP32S3 Sense         = 21 x 17.8 x 15 mm with camera board,
+                                   mass NOT published by Seeed
 
-    A 1020 is a 10 x 20 mm can, i.e. fatter than both a 720 and an 8520, so it
-    cannot be lighter than 4.3 g. Scaling 8520 by (10/8.5)^2 gives ~6.0 g; the
-    table uses 4.3 g / 5.0 g / 6.0 g as a band instead of pretending to one
-    number, because no 1020 datasheet was obtainable.
+    No 1020 exists in India (Robu, Evelta, Robocraze, Sharvi all checked), so the
+    budget uses the Sharvi 7x20 that is actually buyable, and shows a band.
+
+    Endurance uses momentum theory for the induced power plus a figure-of-merit
+    factor k. k is calibrated on the Eachine E010 class (22 g AUW, 31 mm props,
+    ~3.5 min on a 150 mAh 1S) which gives k ~ 6.5 for tiny props. k improves as
+    props get bigger, so 65 mm is shown across k = 4.0-6.0.
     """
+    import math
+
     PCB_AREA = 3.25 * 3.00          # cm
     FR4_DENSITY = 1.85              # g/cm3
     PCB_T = 0.16                    # cm, 1.6 mm
     pcb_g = PCB_AREA * PCB_T * FR4_DENSITY
+
+    XIAO_SENSE_G = 4.6   # main 21x17.8 + camera expansion; estimate, Seeed gives no mass
+    BUDGET = 40.0
+    BAT_G = 10.0
+    WH_PER_G = 0.154     # WLY 250 mAh measured
+    DOD = 0.8
 
     rows = [
         # section, ref, qty, each_g, source
@@ -286,11 +321,15 @@ def write_weight(path):
         ("COMPONENT", "R2,R3,R5,R7 10R 0603", 4, 0.002, "Vishay CRCW0603 mass = 2 mg"),
         ("COMPONENT", "R10 330R 0603", 1, 0.002, "Vishay CRCW0603 mass = 2 mg"),
         ("COMPONENT", "U2 BMI270 LGA-14 (DNP)", 1, 0.012, "DNP, excluded from AUW"),
+        ("MODULE", "U1 Seeed XIAO ESP32S3 Sense + camera board", 1, XIAO_SENSE_G,
+         "ESTIMATE: 21x17.8 main + 21x17.8x15 mm camera stack (Seeed wiki dimensions); "
+         "Seeed publishes no mass. Computed from PCB volume + OV2640 + B2B connectors."),
         ("OPTIONAL", "BZ1 TDK PS1240P02CT3 piezo", 1, 0.35,
          "TDK 12.2 mm x 3.5 mm brass-disc piezo, ~0.35 g estimate; not on the datasheet"),
-        ("MOTOR", "1020 coreless, low case (4.3 g)", 4, 4.3,
-         "cannot be lighter than an 8520 (8.5 x 20 mm, ~4.3 g) since a 1020 is a 10 x 20 mm can"),
-        ("PROP", "Propeller 1020-class 2-blade", 4, 0.35, "typical 55-65 mm micro prop"),
+        ("MOTOR", "Coreless 7x20 (Sharvi ST2001RO0137)", 4, 3.4,
+         "Evelta 720 page: 3.4 g each. A 1020 is a 10 x 20 mm can and would be heavier."),
+        ("PROP", "65 mm 2-blade (bundled with the motor)", 4, 0.35,
+         "typical 65 mm micro prop"),
     ]
 
     with open(path, "w", newline="", encoding="utf-8") as f:
@@ -311,63 +350,132 @@ def write_weight(path):
         w.writerow(["", "Populated airframe, no battery", "", "", f"{pop:.2f}", ""])
         w.writerow(["", "DNP + optional parts if fitted", "", "", f"{dnp:.2f}", ""])
         w.writerow([])
-        w.writerow(["BATTERY", "10 g 1S pack = 1.54 Wh, 416 mAh nominal", 1, 10.0, 10.0,
+        w.writerow(["BATTERY", "10 g 1S pack = 1.54 Wh, 416 mAh nominal", 1, BAT_G, BAT_G,
                     "10 g at 154 Wh/kg, the WLY 250 mAh cell's measured density"])
-        w.writerow(["RESULT", "AUW with the 10 g pack", "", "", f"{pop + 10.0:.2f}", ""])
-        w.writerow(["RESULT", "Budget", "", "", "30.00", "given in the brief"])
-        w.writerow(["RESULT", "Headroom against the 30 g budget", "", "",
-                    f"{30.0 - (pop + 10.0):+.2f}",
-                    "negative = over budget"])
+        auw = pop + BAT_G
+        w.writerow(["RESULT", "AUW with the 10 g pack", "", "", f"{auw:.2f}", ""])
+        w.writerow(["RESULT", "Budget", "", "", f"{BUDGET:.2f}", "given in the brief"])
+        w.writerow(["RESULT", "Headroom against the 40 g budget", "", "",
+                    f"{BUDGET - auw:+.2f}", "negative = over budget"])
         w.writerow(["RESULT", "Verdict", "", "",
-                    "OVER BUDGET" if pop + 10.0 > 30.0 else "within budget", ""])
+                    "OVER BUDGET" if auw > BUDGET else "within budget", ""])
         w.writerow([])
-        w.writerow(["PROBLEM", "15 min and a 10 g battery cannot both hold", "", "", "",
-                    "a 10 g 1S pack is 1.54 Wh, which is ~7 min of hover at this AUW. "
-                    "Reaching 15 min needs a ~35 g pack and pushes AUW to ~57 g, i.e. "
-                    "almost double the 30 g target. Pick one: 30 g, or 15 min."])
 
-        # Battery / flight-time trade, hover at 0.30 W/g, 80% depth of discharge.
-        w.writerow(["TRADE", "Motor mass per motor (g)", "4.3", "5.0", "6.0",
-                    "band: 8520-equivalent up to (10/8.5)^2 scaled from 8520"])
-        psp, dod, wh_g = 0.30, 0.8, 0.154
-        for mg in (4.3, 5.0, 6.0):
-            pass
-        # fixed airframe differs per motor mass; recompute per column
-        airframes = []
-        for mg in (4.3, 5.0, 6.0):
-            fixed = pop - 4 * 4.3 + 4 * mg
-            airframes.append(fixed)
-        w.writerow(["TRADE", "Airframe, no battery (g)"] +
-                   [f"{a:.2f}" for a in airframes] + [""])
-        auw10 = [a + 10.0 for a in airframes]
-        w.writerow(["TRADE", "AUW with 10 g pack (g)"] +
-                   [f"{a:.2f}" for a in auw10] + [""])
-        t10 = []
-        for a in auw10:
-            P = a * psp
-            t10.append(10.0 * wh_g * dod / P * 60)
-        w.writerow(["TRADE", "Flight time on the 10 g pack (min)"] +
-                   [f"{t:.1f}" for t in t10] +
-                   ["1.54 Wh x 0.8 / hover power; hover power = AUW x 0.30 W/g"])
+        # ---- endurance ----------------------------------------------------
+        rho = 1.225
+        wh_avail = BAT_G * WH_PER_G * DOD
 
-        # Solve for the pack that would actually give 15 minutes.
-        need = []
-        for a in airframes:
-            m = a + 20.0
-            for _ in range(200):
-                P = m * psp
-                Wh = P * 15 / 60 / dod
-                m2 = a + Wh / wh_g
-                if abs(m2 - m) < 1e-9:
+        def p_ind(mass_g, dia_mm, n=4):
+            A = n * math.pi * (dia_mm / 2000) ** 2
+            return (mass_g / 1000 * 9.81) ** 1.5 / math.sqrt(2 * rho * A)
+
+        w.writerow(["ENDURE", "Available energy on the 10 g pack (Wh)", "", "",
+                    f"{wh_avail:.2f}", "1.54 Wh x 80% depth of discharge"])
+        w.writerow(["ENDURE", "Prop size", "31 mm (on board)", "55 mm (needs arms)",
+                    "65 mm (needs arms)", "a 32.5x30 mm board cannot clear props >30 mm"])
+        w.writerow(["ENDURE", "Induced power, ideal (W)"])
+        # rewrite that row properly below
+
+    # rebuild the file cleanly with the endurance block
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["Section", "Item", "Qty", "Unit_g", "Total_g", "Source"])
+        pop = dnp = 0.0
+        for sec, item, qty, each, src in rows:
+            tot = qty * each
+            w.writerow([sec, item, qty, f"{each:g}", f"{tot:g}", src])
+            if "(DNP)" in item:
+                dnp += tot
+            elif sec == "OPTIONAL":
+                dnp += tot
+            else:
+                pop += tot
+        w.writerow([])
+        w.writerow(["", "Populated airframe, no battery", "", "", f"{pop:.2f}", ""])
+        w.writerow(["", "DNP + optional parts if fitted", "", "", f"{dnp:.2f}", ""])
+        w.writerow([])
+        w.writerow(["BATTERY", "10 g 1S pack = 1.54 Wh, 416 mAh nominal", 1, BAT_G, BAT_G,
+                    "10 g at 154 Wh/kg, the WLY 250 mAh cell's measured density"])
+        auw = pop + BAT_G
+        w.writerow(["RESULT", "AUW with the 10 g pack", "", "", f"{auw:.2f}", ""])
+        w.writerow(["RESULT", "Budget", "", "", f"{BUDGET:.2f}", "given in the brief"])
+        w.writerow(["RESULT", "Headroom against the 40 g budget", "", "",
+                    f"{BUDGET - auw:+.2f}", "negative = over budget"])
+        w.writerow(["RESULT", "Verdict", "", "",
+                    "OVER BUDGET" if auw > BUDGET else "within budget", ""])
+        w.writerow([])
+
+        rho = 1.225
+        wh_avail = BAT_G * WH_PER_G * DOD
+
+        def p_ind(mass_g, dia_mm, n=4):
+            A = n * math.pi * (dia_mm / 2000) ** 2
+            return (mass_g / 1000 * 9.81) ** 1.5 / math.sqrt(2 * rho * A)
+
+        w.writerow(["ENDURE", "Energy available on the 10 g pack (Wh)", "", "", "",
+                    f"{wh_avail:.2f} Wh = 1.54 Wh x 80% depth of discharge"])
+        w.writerow(["ENDURE", "Prop diameter", "31 mm", "55 mm", "65 mm",
+                    "31 mm fits the bare board; 55/65 mm need arms, which add mass"])
+        w.writerow(["ENDURE", "Ideal induced power (W)"] +
+                   [f"{p_ind(auw, d):.2f}" for d in (31, 55, 65)] +
+                   ["P = (mg)^1.5 / sqrt(2 rho A), momentum theory lower bound"])
+        w.writerow(["ENDURE", "Figure of merit k", "6.5", "5.0", "4.5",
+                    "k calibrated on the Eachine E010 class: 22 g, 31 mm props, ~3.5 min "
+                    "on 150 mAh gives k~6.5. k falls as props get bigger."])
+        p_row = []
+        t_row = []
+        for d in (31, 55, 65):
+            k = {31: 6.5, 55: 5.0, 65: 4.5}[d]
+            P = p_ind(auw, d) * k
+            p_row.append(f"{P:.2f}")
+            t_row.append(f"{wh_avail / P * 60:.1f}")
+        w.writerow(["ENDURE", "Hover power (W)"] + p_row + ["ideal x k"])
+        w.writerow(["ENDURE", "Endurance (min)"] + t_row +
+                   ["best case for each prop size on the 10 g pack"])
+        w.writerow(["ENDURE", "Hover power per gram (W/g)"] +
+                   [f"{p_ind(auw, d) * {31: 6.5, 55: 5.0, 65: 4.5}[d] / auw:.3f}"
+                    for d in (31, 55, 65)] +
+                   ["this is the number to minimise"])
+        w.writerow([])
+
+        # what the mass budget buys
+        w.writerow(["OPTIMISE", "How to get the most endurance out of 10 g", "", "", "",
+                    "1. Biggest prop that fits - endurance scales ~1/diameter. This is the "
+                    "single biggest lever and it is an airframe decision, not an electronics one."])
+        w.writerow(["OPTIMISE", "2. Keep AUW down", "", "", "",
+                    "every gram of AUW costs ~1.5% of endurance. At 33.5 g you have "
+                    f"{BUDGET - auw:.1f} g of headroom to 40 g; spend it on structure for bigger "
+                    "props, not on heavier electronics."])
+        w.writerow(["OPTIMISE", "3. Cell choice inside 10 g", "", "", "",
+                    "154 Wh/kg is already near the practical ceiling for small 1S pouches "
+                    "(the 78 Wh/kg Pro-Range 360 mAh shows how bad cheap packs are). A higher-C "
+                    "or HV 4.35 V cell buys ~5%, not more."])
+        w.writerow(["OPTIMISE", "4. Drop the camera", "", "", "",
+                    "the XIAO Sense + camera board is ~4.6 g of the 33.5 g. The plain XIAO "
+                    "ESP32S3 is lighter and cheaper; only keep the camera if you need it."])
+        w.writerow(["OPTIMISE", "5. Do not fit the piezo unless needed", "", "", "",
+                    "BZ1 is ~0.35 g and costs 0.5% endurance. It is already Optional."])
+        w.writerow([])
+        # 15 min at 65 mm props: how much AUW is affordable?
+        lim = {}
+        for k in (4.5, 5.0, 5.5):
+            for m in range(28, 46):
+                if wh_avail / (p_ind(m, 65) * k) * 60 < 15:
+                    lim[k] = m
                     break
-                m = m2
-            need.append((m - a, m))
-        w.writerow(["TRADE", "Pack mass for 15 min (g)"] +
-                   [f"{b:.1f}" for b, _ in need] + [""])
-        w.writerow(["TRADE", "AUW needed for 15 min (g)"] +
-                   [f"{m:.1f}" for _, m in need] +
-                   ["iterated to convergence; 15 min and a 10 g pack cannot both hold"])
-    return pop, pop + 10.0
+        w.writerow(["BOUND", "15 min on the 10 g pack at 65 mm props", "", "", "",
+                    f"reachable only up to {lim[4.5]} g AUW at k=4.5, "
+                    f"{lim[5.0]} g at k=5.0, {lim[5.5]} g at k=5.5. This airframe is "
+                    f"{auw:.1f} g, so 15 min is inside reach at k=4.5 with "
+                    f"{lim[4.5] - auw:.1f} g to spare - but there is no margin, and any "
+                    "extra frame mass, wire or heavier motor breaks it."])
+        w.writerow(["BOUND", "15 min on 31 mm props", "", "", "",
+                    f"not reachable. 31 mm props at k=6.5 give "
+                    f"{wh_avail / (p_ind(auw, 31) * 6.5) * 60:.1f} min and would need "
+                    f"{15 / 60 * p_ind(auw, 31) * 6.5 / WH_PER_G / DOD:.0f} g of battery to "
+                    "reach 15 min. Props that clear a 32.5x30 mm board without arms are too "
+                    "small to be efficient."])
+    return pop, auw
 
 
 if __name__ == "__main__":
