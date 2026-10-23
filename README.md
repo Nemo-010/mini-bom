@@ -99,6 +99,39 @@ At 33.5 g this airframe clears 15 min **only at k=4.5**, with 1.5 g spare. Any
 extra frame mass, wire, or a heavier motor breaks it. On 31 mm props 15 min is
 not reachable at all — it would need ~29 g of battery.
 
+## Is the 7×20 better than a 1020 for us?
+
+**Yes, for endurance, and it is not close.**
+
+Hover thrust is fixed at AUW. Once a motor can swing the prop, any extra motor mass
+is dead weight — it buys thrust capacity that hover never uses. A 1020 is ~1.8 g
+heavier per motor (4.5–5.2 g vs 3.4 g), so 4 of them add ~7.2 g of AUW:
+
+| Can | Mass/motor | AUW (65 mm props) | Hover endurance |
+|---|---|---|---|
+| 7 mm (720) | 3.4 g | 33.5 g | **15.7 min** |
+| 8.5 mm (8520) | 4.3 g | 37.1 g | 13.5 min |
+| 10 mm (1020) | 5.2 g | 40.7 g | 11.7 min |
+
+Same prop, and the 1020 costs **25% of endurance** — and puts AUW at 40.7 g, i.e.
+over the 40 g ceiling before any frame or arms exist.
+
+The mass figure for a 1020 is a fit through the two measured anchors (7 mm →
+3.4 g, 8.5 mm → 4.3 g), giving mass ∝ d^1.21, which lands a 1020 at ~5.2 g. The
+honest band is 4.5–6.9 g, since a can is shell (∝ d·L) plus magnet/coil (∝ d²·L).
+Nothing in that band changes the conclusion.
+
+**When a 1020 would be right:** only if you want more torque for a bigger prop or
+more punch. A 1020 on 90 mm props does beat the 720 on 65 mm (16.3 vs 15.7 min) —
+but at 40.7 g AUW that win only exists outside your budget.
+
+**Is the 7×20 under-powered?** No. Four of them at 18–25 g thrust each on a
+33.5 g AUW gives thrust-to-weight of 2.2–3.0, which is normal for a micro quad.
+There is no control-authority problem that would justify the heavier can.
+
+So the 7×20 isn't just "the only one in stock" — on this airframe and this budget
+it is the better part.
+
 ## Flight controller
 
 **Seeed XIAO ESP32S3 Sense**, Robu `1587654`, ₹2199, **out of stock**.

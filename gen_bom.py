@@ -469,6 +469,32 @@ def write_weight(path):
                     f"{auw:.1f} g, so 15 min is inside reach at k=4.5 with "
                     f"{lim[4.5] - auw:.1f} g to spare - but there is no margin, and any "
                     "extra frame mass, wire or heavier motor breaks it."])
+        # 720 vs 1020 comparison
+        w.writerow([])
+        w.writerow(["720-vs-1020", "Is the 7x20 better than a 1020 for this build?", "", "", "",
+                    "Yes for endurance, and it is not close. See the rows below."])
+        mass = {7.0: 3.4, 8.5: 4.3, 10.0: 5.2}
+        for can in (7.0, 8.5, 10.0):
+            a = pop - 4 * 3.4 + 4 * mass[can] + BAT_G
+            t = wh_avail / (p_ind(a, 65) * 4.5) * 60
+            w.writerow(["720-vs-1020",
+                        f"{can:g} mm can on 65 mm props",
+                        f"{mass[can]:g} g/motor", "", f"AUW {a:.1f} g",
+                        f"{t:.1f} min hover"])
+        w.writerow(["720-vs-1020", "Why the smaller can wins on endurance", "", "", "",
+                    "hover thrust is fixed at AUW, so motor mass above what is needed to swing "
+                    "the prop is dead weight. A 1020 adds ~1.8 g per motor = +7.2 g AUW for "
+                    "thrust capacity that hover never uses. Same 65 mm prop, 15.7 min -> 11.7 min "
+                    "(25% worse)."])
+        w.writerow(["720-vs-1020", "When a 1020 would be the right call", "", "", "",
+                    "only if you need the extra torque for a bigger prop or punch. A 1020 on "
+                    "90 mm props beats the 720 on 65 mm (16.3 vs 15.7 min), but that AUW is "
+                    "40.7 g - over the 40 g ceiling before any frame or arms. So the win only "
+                    "exists outside the budget."])
+        w.writerow(["720-vs-1020", "Thrust margin check on the 7x20", "", "", "",
+                    "4 x 18-25 g thrust on a 33.5 g AUW gives T/W 2.2-3.0, which is normal for "
+                    "a micro quad. There is no control-authority problem that would justify the "
+                    "heavier can."])
         w.writerow(["BOUND", "15 min on 31 mm props", "", "", "",
                     f"not reachable. 31 mm props at k=6.5 give "
                     f"{wh_avail / (p_ind(auw, 31) * 6.5) * 60:.1f} min and would need "

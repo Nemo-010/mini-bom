@@ -41,4 +41,12 @@ OPTIMISE,4. Drop the camera,,,,the XIAO Sense + camera board is ~4.6 g of the 33
 OPTIMISE,5. Do not fit the piezo unless needed,,,,BZ1 is ~0.35 g and costs 0.5% endurance. It is already Optional.
 
 BOUND,15 min on the 10 g pack at 65 mm props,,,,"reachable only up to 35 g AUW at k=4.5, 33 g at k=5.0, 31 g at k=5.5. This airframe is 33.5 g, so 15 min is inside reach at k=4.5 with 1.5 g to spare - but there is no margin, and any extra frame mass, wire or heavier motor breaks it."
+
+720-vs-1020,Is the 7x20 better than a 1020 for this build?,,,,"Yes for endurance, and it is not close. See the rows below."
+720-vs-1020,7 mm can on 65 mm props,3.4 g/motor,,AUW 33.5 g,15.7 min hover
+720-vs-1020,8.5 mm can on 65 mm props,4.3 g/motor,,AUW 37.1 g,13.5 min hover
+720-vs-1020,10 mm can on 65 mm props,5.2 g/motor,,AUW 40.7 g,11.7 min hover
+720-vs-1020,Why the smaller can wins on endurance,,,,"hover thrust is fixed at AUW, so motor mass above what is needed to swing the prop is dead weight. A 1020 adds ~1.8 g per motor = +7.2 g AUW for thrust capacity that hover never uses. Same 65 mm prop, 15.7 min -> 11.7 min (25% worse)."
+720-vs-1020,When a 1020 would be the right call,,,,"only if you need the extra torque for a bigger prop or punch. A 1020 on 90 mm props beats the 720 on 65 mm (16.3 vs 15.7 min), but that AUW is 40.7 g - over the 40 g ceiling before any frame or arms. So the win only exists outside the budget."
+720-vs-1020,Thrust margin check on the 7x20,,,,"4 x 18-25 g thrust on a 33.5 g AUW gives T/W 2.2-3.0, which is normal for a micro quad. There is no control-authority problem that would justify the heavier can."
 BOUND,15 min on 31 mm props,,,,not reachable. 31 mm props at k=6.5 give 5.2 min and would need 29 g of battery to reach 15 min. Props that clear a 32.5x30 mm board without arms are too small to be efficient.
