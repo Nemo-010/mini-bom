@@ -1,0 +1,34 @@
+Section,Item,Qty,Unit_g,Total_g,Source
+PCB,"PCB1 (32.5 x 30 mm, 1.6 mm FR4, 2-layer)",1,2.886,2.886,computed: 9.75 cm2 x 0.16 cm x 1.85 g/cm3
+COMPONENT,C1-C4 10nF 0603,4,0.002,0.008,typical 0603 MLCC
+COMPONENT,"C5,C6 100nF 0603 (DNP)",2,0.002,0.004,"DNP, excluded from AUW"
+COMPONENT,D1-D4 SS24FL SOD-123FL,4,0.012,0.048,computed from SOD-123FL body x mold density
+COMPONENT,"J11,J22,J23,J24 JST-GH 1x2 SMT",4,0.15,0.6,typical 1.25 mm SMT 1x2 header + shell
+COMPONENT,J12 CJT A2543WV-2P THT 2.54 mm wafer,1,0.3,0.3,THT 2-pin 2.54 mm wafer + plastic body
+COMPONENT,J1 2.54 mm 1x2 (DNP),1,0.3,0.3,"DNP, excluded from AUW"
+COMPONENT,J10 1.27 mm 1x2 (DNP),1,0.05,0.05,"DNP, excluded from AUW"
+COMPONENT,Q1-Q4 DMN2058U SOT-23,4,0.009,0.036,"Diodes Inc datasheet, 0.009 g"
+COMPONENT,"R1,R4,R6,R8 10k 0603",4,0.002,0.008,Vishay CRCW0603 mass = 2 mg
+COMPONENT,"R2,R3,R5,R7 10R 0603",4,0.002,0.008,Vishay CRCW0603 mass = 2 mg
+COMPONENT,R10 330R 0603,1,0.002,0.002,Vishay CRCW0603 mass = 2 mg
+COMPONENT,U2 BMI270 LGA-14 (DNP),1,0.012,0.012,"DNP, excluded from AUW"
+OPTIONAL,BZ1 TDK PS1240P02CT3 piezo,1,0.35,0.35,"TDK 12.2 mm x 3.5 mm brass-disc piezo, ~0.35 g estimate; not on the datasheet"
+MOTOR,"1020 coreless, low case (4.3 g)",4,4.3,17.2,"cannot be lighter than an 8520 (8.5 x 20 mm, ~4.3 g) since a 1020 is a 10 x 20 mm can"
+PROP,Propeller 1020-class 2-blade,4,0.35,1.4,typical 55-65 mm micro prop
+
+,"Populated airframe, no battery",,,22.50,
+,DNP + optional parts if fitted,,,0.72,
+
+BATTERY,"10 g 1S pack = 1.54 Wh, 416 mAh nominal",1,10.0,10.0,"10 g at 154 Wh/kg, the WLY 250 mAh cell's measured density"
+RESULT,AUW with the 10 g pack,,,32.50,
+RESULT,Budget,,,30.00,given in the brief
+RESULT,Headroom against the 30 g budget,,,-2.50,negative = over budget
+RESULT,Verdict,,,OVER BUDGET,
+
+PROBLEM,15 min and a 10 g battery cannot both hold,,,,"a 10 g 1S pack is 1.54 Wh, which is ~7 min of hover at this AUW. Reaching 15 min needs a ~35 g pack and pushes AUW to ~57 g, i.e. almost double the 30 g target. Pick one: 30 g, or 15 min."
+TRADE,Motor mass per motor (g),4.3,5.0,6.0,band: 8520-equivalent up to (10/8.5)^2 scaled from 8520
+TRADE,"Airframe, no battery (g)",22.50,25.30,29.30,
+TRADE,AUW with 10 g pack (g),32.50,35.30,39.30,
+TRADE,Flight time on the 10 g pack (min),7.6,7.0,6.3,1.54 Wh x 0.8 / hover power; hover power = AUW x 0.30 W/g
+TRADE,Pack mass for 15 min (g),35.0,39.4,45.6,
+TRADE,AUW needed for 15 min (g),57.5,64.7,74.9,iterated to convergence; 15 min and a 10 g pack cannot both hold
